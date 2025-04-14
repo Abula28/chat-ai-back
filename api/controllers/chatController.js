@@ -2,17 +2,20 @@ import Session from "../models/Session.js";
 import Message from "../models/Message.js";
 import OpenAI from "openai";
 import { config } from "dotenv";
-config();
-// Initialize OpenAI
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+import { ChatOpenAI } from "@langchain/openai";
+import { HumanMessage, SystemMessage } from "@langchain/core/messages";
+import SystemPrompt from "../models/SystemPrompt.js";
 
-// Create new session
+const model = new ChatOpenAI({
+  model: "gpt-4",
+  openAIApiKey: process.env.OPENAI_API_KEY,
+});
+config();
+
 export const createSession = async (req, res) => {
   try {
     const session = new Session({
-      userId: req.body.userId || "anonymous",
+      userId: req.user._id,
     });
     await session.save();
     res.json({ sessionId: session._id });
@@ -21,11 +24,10 @@ export const createSession = async (req, res) => {
   }
 };
 
-// Get session messages
 export const getSessionMessages = async (req, res) => {
   try {
     const messages = await Message.find({ sessionId: req.params.id }).sort({
-      timestamp: 1,
+      createdAt: 1,
     });
     res.json(messages);
   } catch (error) {
@@ -33,37 +35,42 @@ export const getSessionMessages = async (req, res) => {
   }
 };
 
-// Send message and get AI response
 export const sendMessage = async (req, res) => {
   try {
-    const { sessionId, content } = req.body;
+    const { sessionId, content, systemId } = req.body;
 
-    // Save user message
-    const userMessage = new Message({
+    const systemPrompt = await SystemPrompt.findById(systemId);
+
+    if (!systemPrompt) {
+      return res.status(404).json({ error: "System prompt not found" });
+    }
+
+    const systemMessage = new SystemMessage(systemPrompt.content);
+    const userMessage = new HumanMessage(content);
+
+    const messages = [systemMessage, userMessage];
+
+    const response = await model.invoke(messages);
+
+    const aiResponse = response.content;
+
+    await Message.create({
       sessionId,
       sender: "user",
       content,
-    });
-    await userMessage.save();
-
-    // Get AI response
-    const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [{ role: "user", content }],
+      systemId,
     });
 
-    const aiResponse = completion.choices[0].message.content;
-
-    // Save AI response
-    const assistantMessage = new Message({
+    await Message.create({
       sessionId,
       sender: "assistant",
       content: aiResponse,
+      systemId,
     });
-    await assistantMessage.save();
 
     res.json({ response: aiResponse });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: error.message });
   }
 };

@@ -5,24 +5,24 @@ import {
   getSessionMessages,
   sendMessage,
 } from "../controllers/chatController.js";
+import { checkAuth } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-// Create new session
-router.post("/session", createSession);
+router.post("/session", checkAuth, createSession);
 
-// Get session messages
 router.get(
   "/session/:id/messages",
+  checkAuth,
   param("id").isMongoId(),
   getSessionMessages
 );
 
-// Send message and get AI response
 router.post(
   "/chat",
-  body("sessionId").isMongoId(),
-  body("content").notEmpty(),
+  checkAuth,
+  // body("sessionId").isMongoId(),
+  // body("content").notEmpty(),
   sendMessage
 );
 

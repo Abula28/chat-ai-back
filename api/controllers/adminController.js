@@ -2,17 +2,6 @@ import Session from "../models/Session.js";
 import Message from "../models/Message.js";
 import SystemPrompt from "../models/SystemPrompt.js";
 
-// Middleware to check admin authentication
-export const isAdmin = (req, res, next) => {
-  const adminToken = req.headers["x-admin-token"];
-  if (adminToken === process.env.ADMIN_TOKEN) {
-    next();
-  } else {
-    res.status(403).json({ error: "Unauthorized" });
-  }
-};
-
-// Get all sessions
 export const getAllSessions = async (req, res) => {
   try {
     const sessions = await Session.find().sort({ createdAt: -1 });
@@ -22,7 +11,6 @@ export const getAllSessions = async (req, res) => {
   }
 };
 
-// Get specific session messages
 export const getSessionDetails = async (req, res) => {
   try {
     const messages = await Message.find({ sessionId: req.params.id }).sort({
@@ -34,7 +22,6 @@ export const getSessionDetails = async (req, res) => {
   }
 };
 
-// Get current system prompt
 export const getSystemPrompt = async (req, res) => {
   try {
     const prompt = await SystemPrompt.findOne().sort({ createdAt: -1 });
@@ -44,13 +31,31 @@ export const getSystemPrompt = async (req, res) => {
   }
 };
 
-// Update system prompt
+export const createSystemPrompt = async (req, res) => {
+  try {
+    const prompt = await SystemPrompt.create(req.body);
+    res.json({ message: "System prompt created successfully", prompt });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
 export const updateSystemPrompt = async (req, res) => {
   try {
-    const prompt = new SystemPrompt({
-      content: req.body.content,
-    });
-    await prompt.save();
+    const prompt = await SystemPrompt.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    if (!prompt) {
+      return res.status(404).json({ error: "System prompt not found" });
+    }
+
     res.json(prompt);
   } catch (error) {
     res.status(500).json({ error: error.message });

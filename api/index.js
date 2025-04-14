@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import chatRoutes from "./routes/chat.js";
 import adminRoutes from "./routes/admin.js";
+import authRoutes from "./routes/auth.js";
 
 config();
 const app = express();
@@ -15,6 +16,7 @@ app.use(express.json());
 // Routes
 app.use("/api", chatRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/auth", authRoutes);
 
 // MongoDB connection
 mongoose
