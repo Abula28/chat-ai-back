@@ -45,9 +45,20 @@ export const register = async (req, res) => {
       expiresIn: process.env.JWT_EXPIRES_IN || "24h",
     });
 
+    const userData = {
+      _id: newUser._id,
+      email: newUser.email,
+      username: newUser.username,
+      role: newUser.role,
+      createdAt: newUser.createdAt,
+      updatedAt: newUser.updatedAt,
+    };
+
     res.status(201).json({
+      status: "success",
       message: "User registered successfully",
       token,
+      user: userData,
     });
   } catch (err) {
     res.status(500).json({
@@ -71,7 +82,7 @@ export const login = async (req, res) => {
     const user = await User.findOne({ email }).select("+password");
 
     if (!user || !(await user.comparePassword(password))) {
-      return res.status(401).json({
+      return res.status(400).json({
         status: "fail",
         message: "Incorrect email or password",
       });
@@ -81,10 +92,45 @@ export const login = async (req, res) => {
       expiresIn: "24h",
     });
 
+    // Create user object without password
+    const userData = {
+      _id: user._id,
+      email: user.email,
+      username: user.username,
+      role: user.role,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    };
+
     res.status(200).json({
       status: "success",
-
+      message: "Login successful",
       token,
+      user: userData,
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: "error",
+      message: "Something went wrong",
+    });
+  }
+};
+
+export const userCheckIn = async (req, res) => {
+  try {
+    const user = req.user;
+
+    if (!user) {
+      return res.status(401).json({
+        status: "fail",
+        message: "Unauthorized",
+      });
+    }
+
+    res.status(200).json({
+      status: "success",
+      message: "User is logged in",
+      user,
     });
   } catch (err) {
     res.status(500).json({

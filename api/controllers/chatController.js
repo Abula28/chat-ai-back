@@ -3,7 +3,11 @@ import Message from "../models/Message.js";
 import OpenAI from "openai";
 import { config } from "dotenv";
 import { ChatOpenAI } from "@langchain/openai";
-import { HumanMessage, SystemMessage } from "@langchain/core/messages";
+import {
+  HumanMessage,
+  SystemMessage,
+  AIMessage,
+} from "@langchain/core/messages";
 import SystemPrompt from "../models/SystemPrompt.js";
 
 const model = new ChatOpenAI({
@@ -24,43 +28,59 @@ export const createSession = async (req, res) => {
   }
 };
 
-export const getSessionMessages = async (req, res) => {
+export const getSessionsByUser = async (req, res) => {
   try {
-    const messages = await Message.find({ sessionId: req.params.id }).sort({
-      createdAt: 1,
-    });
-    res.json(messages);
+    const sessions = await Session.find({ userId: req.user._id });
+    res.json(sessions);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 
+export const getSessionMessages = async (req, res) => {
+  try {
+    const messages = await Message.find({
+      sessionId: req.params.id,
+    }).sort({
+      createdAt: 1,
+    });
+
+    res.json(messages);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error.message });
+  }
+};
 export const sendMessage = async (req, res) => {
   try {
     const { sessionId, content, systemId } = req.body;
 
     const systemPrompt = await SystemPrompt.findById(systemId);
-
     if (!systemPrompt) {
       return res.status(404).json({ error: "System prompt not found" });
     }
 
-    const systemMessage = new SystemMessage(systemPrompt.content);
-    const userMessage = new HumanMessage(content);
+    const history = await Message.find({ sessionId }).sort({ createdAt: 1 });
 
-    const messages = [systemMessage, userMessage];
+    const chatHistory = history.map((msg) => ({
+      role: msg.sender,
+      content: msg.content,
+    }));
+
+    const messages = [
+      new SystemMessage(systemPrompt.content),
+      ...chatHistory.map((msg) =>
+        msg.role === "user"
+          ? new HumanMessage(msg.content)
+          : new AIMessage(msg.content)
+      ),
+      new HumanMessage(content),
+    ];
 
     const response = await model.invoke(messages);
-
     const aiResponse = response.content;
 
-    await Message.create({
-      sessionId,
-      sender: "user",
-      content,
-      systemId,
-    });
-
+    await Message.create({ sessionId, sender: "user", content, systemId });
     await Message.create({
       sessionId,
       sender: "assistant",
@@ -70,7 +90,7 @@ export const sendMessage = async (req, res) => {
 
     res.json({ response: aiResponse });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({ error: error.message });
   }
 };

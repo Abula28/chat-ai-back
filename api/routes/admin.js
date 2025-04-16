@@ -3,7 +3,6 @@ import { body, param } from "express-validator";
 import {
   getAllSessions,
   getSessionDetails,
-  getSystemPrompt,
   updateSystemPrompt,
   createSystemPrompt,
 } from "../controllers/adminController.js";
@@ -21,11 +20,9 @@ router.get(
   getSessionDetails
 );
 
-router.get("/knowledge", checkAuth, isAdmin, getSystemPrompt);
-
 router.post("/prompt", checkAuth, isAdmin, createSystemPrompt);
 
-router.post(
+router.put(
   "/prompt/:id",
   checkAuth,
   isAdmin,

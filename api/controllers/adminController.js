@@ -24,8 +24,12 @@ export const getSessionDetails = async (req, res) => {
 
 export const getSystemPrompt = async (req, res) => {
   try {
-    const prompt = await SystemPrompt.findOne().sort({ createdAt: -1 });
-    res.json(prompt);
+    const prompts = await SystemPrompt.find().sort({ createdAt: -1 });
+    res.json({
+      status: "success",
+      message: "Prompts fetched successfully",
+      prompts,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
@@ -34,7 +38,11 @@ export const getSystemPrompt = async (req, res) => {
 export const createSystemPrompt = async (req, res) => {
   try {
     const prompt = await SystemPrompt.create(req.body);
-    res.json({ message: "System prompt created successfully", prompt });
+    res.json({
+      status: "success",
+      message: "System prompt created successfully",
+      prompt,
+    });
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: err.message });

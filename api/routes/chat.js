@@ -3,6 +3,7 @@ import { body, param } from "express-validator";
 import {
   createSession,
   getSessionMessages,
+  getSessionsByUser,
   sendMessage,
 } from "../controllers/chatController.js";
 import { checkAuth } from "../middlewares/authMiddleware.js";
@@ -10,6 +11,8 @@ import { checkAuth } from "../middlewares/authMiddleware.js";
 const router = express.Router();
 
 router.post("/session", checkAuth, createSession);
+
+router.get("/sessions", checkAuth, getSessionsByUser);
 
 router.get(
   "/session/:id/messages",
@@ -19,10 +22,10 @@ router.get(
 );
 
 router.post(
-  "/chat",
+  "/",
   checkAuth,
-  // body("sessionId").isMongoId(),
-  // body("content").notEmpty(),
+  body("sessionId").isMongoId(),
+  body("content").notEmpty(),
   sendMessage
 );
 
