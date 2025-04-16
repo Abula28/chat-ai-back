@@ -1,6 +1,5 @@
 import Session from "../models/Session.js";
 import Message from "../models/Message.js";
-import OpenAI from "openai";
 import { config } from "dotenv";
 import { ChatOpenAI } from "@langchain/openai";
 import {
@@ -18,8 +17,10 @@ config();
 
 export const createSession = async (req, res) => {
   try {
+    const { title } = req.body;
     const session = new Session({
       userId: req.user._id,
+      title: title || "New Chat",
     });
     await session.save();
     res.json({ sessionId: session._id });
