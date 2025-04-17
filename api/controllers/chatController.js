@@ -31,7 +31,25 @@ export const createSession = async (req, res) => {
 
 export const getSessionsByUser = async (req, res) => {
   try {
-    const sessions = await Session.find({ userId: req.user._id });
+    const sessions = await Session.aggregate([
+      { $match: { userId: req.user._id } },
+      {
+        $lookup: {
+          from: "messages",
+          localField: "_id",
+          foreignField: "sessionId",
+          as: "lastMessage",
+        },
+      },
+      {
+        $addFields: {
+          lastMessageDate: {
+            $ifNull: [{ $max: "$lastMessage.createdAt" }, "$createdAt"],
+          },
+        },
+      },
+      { $sort: { lastMessageDate: -1 } },
+    ]);
     res.json(sessions);
   } catch (error) {
     res.status(500).json({ error: error.message });
