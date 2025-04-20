@@ -2,10 +2,10 @@ import express from "express";
 import { config } from "dotenv";
 import mongoose from "mongoose";
 import cors from "cors";
-import chatRoutes from "./routes/chat.js";
-import adminRoutes from "./routes/admin.js";
-import authRoutes from "./routes/auth.js";
-import knowledgeRoutes from "./routes/knowledge.js";
+import chatRoutes from "../routes/chat.js";
+import adminRoutes from "../routes/admin.js";
+import authRoutes from "../routes/auth.js";
+import knowledgeRoutes from "../routes/knowledge.js";
 
 config();
 const app = express();
