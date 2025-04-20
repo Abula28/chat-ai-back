@@ -1,8 +1,8 @@
-import Session from "../models/Session.js";
-import Message from "../models/Message.js";
-import SystemPrompt from "../models/SystemPrompt.js";
+const Session = require("../models/Session");
+const Message = require("../models/Message");
+const SystemPrompt = require("../models/SystemPrompt");
 
-export const getAllMessages = async (req, res) => {
+const getAllMessages = async (req, res) => {
   try {
     const { sender } = req.query;
 
@@ -42,7 +42,7 @@ export const getAllMessages = async (req, res) => {
   }
 };
 
-export const deleteMessage = async (req, res) => {
+const deleteMessage = async (req, res) => {
   try {
     const { id } = req.params;
     const message = await Message.findByIdAndDelete(id);
@@ -62,7 +62,7 @@ export const deleteMessage = async (req, res) => {
   }
 };
 
-export const getAllSessions = async (req, res) => {
+const getAllSessions = async (req, res) => {
   try {
     const sessions = await Session.find()
       .populate({
@@ -90,7 +90,7 @@ export const getAllSessions = async (req, res) => {
   }
 };
 
-export const deleteSession = async (req, res) => {
+const deleteSession = async (req, res) => {
   try {
     const { id } = req.params;
     const session = await Session.findByIdAndDelete(id);
@@ -112,7 +112,7 @@ export const deleteSession = async (req, res) => {
   }
 };
 
-export const getAllSystemPrompts = async (req, res) => {
+const getAllSystemPrompts = async (req, res) => {
   try {
     const prompts = await SystemPrompt.find().sort({ createdAt: -1 });
     res.json({
@@ -125,7 +125,7 @@ export const getAllSystemPrompts = async (req, res) => {
   }
 };
 
-export const createSystemPrompt = async (req, res) => {
+const createSystemPrompt = async (req, res) => {
   try {
     const prompt = await SystemPrompt.create(req.body);
     res.json({
@@ -139,7 +139,7 @@ export const createSystemPrompt = async (req, res) => {
   }
 };
 
-export const updateSystemPrompt = async (req, res) => {
+const updateSystemPrompt = async (req, res) => {
   try {
     const prompt = await SystemPrompt.findByIdAndUpdate(
       req.params.id,
@@ -165,7 +165,7 @@ export const updateSystemPrompt = async (req, res) => {
   }
 };
 
-export const deleteSystemPrompt = async (req, res) => {
+const deleteSystemPrompt = async (req, res) => {
   try {
     const { id } = req.params;
     const prompt = await SystemPrompt.findByIdAndDelete(id);
@@ -181,4 +181,15 @@ export const deleteSystemPrompt = async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+};
+
+module.exports = {
+  getAllMessages,
+  deleteMessage,
+  getAllSessions,
+  deleteSession,
+  getAllSystemPrompts,
+  createSystemPrompt,
+  updateSystemPrompt,
+  deleteSystemPrompt,
 };

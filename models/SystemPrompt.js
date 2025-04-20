@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const systemPromptSchema = new mongoose.Schema(
   {
@@ -26,4 +26,6 @@ const systemPromptSchema = new mongoose.Schema(
   }
 );
 
-export default mongoose.model("SystemPrompt", systemPromptSchema);
+const SystemPrompt = mongoose.model("SystemPrompt", systemPromptSchema);
+
+module.exports = SystemPrompt;

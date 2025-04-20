@@ -1,6 +1,6 @@
-import express from "express";
-import { body, param } from "express-validator";
-import {
+const express = require("express");
+const { body, param } = require("express-validator");
+const {
   getAllSessions,
   updateSystemPrompt,
   createSystemPrompt,
@@ -8,8 +8,8 @@ import {
   deleteMessage,
   deleteSession,
   getAllSystemPrompts,
-} from "../controllers/adminController.js";
-import { checkAuth, isAdmin } from "../middlewares/authMiddleware.js";
+} = require("../controllers/adminController");
+const { checkAuth, isAdmin } = require("../middlewares/authMiddleware");
 
 const router = express.Router();
 
@@ -30,4 +30,4 @@ router.put(
   updateSystemPrompt
 );
 
-export default router;
+module.exports = router;

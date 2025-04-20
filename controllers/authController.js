@@ -1,7 +1,7 @@
-import User from "../models/User.js";
-import jwt from "jsonwebtoken";
+const User = require("../models/User");
+const jwt = require("jsonwebtoken");
 
-export const register = async (req, res) => {
+const register = async (req, res) => {
   try {
     const { username, email, password, passwordConfirm } = req.body;
 
@@ -68,7 +68,7 @@ export const register = async (req, res) => {
   }
 };
 
-export const login = async (req, res) => {
+const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -102,40 +102,38 @@ export const login = async (req, res) => {
       updatedAt: user.updatedAt,
     };
 
-    res.status(200).json({
+    res.json({
       status: "success",
-      message: "Login successful",
+      message: "User logged in successfully",
       token,
       user: userData,
     });
   } catch (err) {
     res.status(500).json({
-      status: "error",
+      err,
       message: "Something went wrong",
     });
   }
 };
 
-export const userCheckIn = async (req, res) => {
+const userCheckIn = async (req, res) => {
   try {
-    const user = req.user;
-
-    if (!user) {
-      return res.status(401).json({
-        status: "fail",
-        message: "Unauthorized",
-      });
-    }
-
-    res.status(200).json({
+    const user = await User.findById(req.user._id).select("-password");
+    res.json({
       status: "success",
-      message: "User is logged in",
+      message: "User checked in successfully",
       user,
     });
   } catch (err) {
     res.status(500).json({
-      status: "error",
+      err,
       message: "Something went wrong",
     });
   }
+};
+
+module.exports = {
+  register,
+  login,
+  userCheckIn,
 };

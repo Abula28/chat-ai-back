@@ -1,11 +1,11 @@
-import express from "express";
-import { config } from "dotenv";
-import mongoose from "mongoose";
-import cors from "cors";
-import chatRoutes from "../routes/chat.js";
-import adminRoutes from "../routes/admin.js";
-import authRoutes from "../routes/auth.js";
-import knowledgeRoutes from "../routes/knowledge.js";
+const express = require("express");
+const { config } = require("dotenv");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const chatRoutes = require("../routes/chat");
+const adminRoutes = require("../routes/admin");
+const authRoutes = require("../routes/auth");
+const knowledgeRoutes = require("../routes/knowledge");
 
 config();
 const app = express();

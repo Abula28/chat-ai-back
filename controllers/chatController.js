@@ -1,13 +1,13 @@
-import Session from "../models/Session.js";
-import Message from "../models/Message.js";
-import { config } from "dotenv";
-import { ChatOpenAI } from "@langchain/openai";
-import {
+const Session = require("../models/Session");
+const Message = require("../models/Message");
+const { config } = require("dotenv");
+const { ChatOpenAI } = require("@langchain/openai");
+const {
   HumanMessage,
   SystemMessage,
   AIMessage,
-} from "@langchain/core/messages";
-import SystemPrompt from "../models/SystemPrompt.js";
+} = require("@langchain/core/messages");
+const SystemPrompt = require("../models/SystemPrompt");
 
 const model = new ChatOpenAI({
   model: "gpt-4",
@@ -15,7 +15,7 @@ const model = new ChatOpenAI({
 });
 config();
 
-export const createSession = async (req, res) => {
+const createSession = async (req, res) => {
   try {
     const { title } = req.body;
     const session = new Session({
@@ -29,7 +29,7 @@ export const createSession = async (req, res) => {
   }
 };
 
-export const getSessionsByUser = async (req, res) => {
+const getSessionsByUser = async (req, res) => {
   try {
     const sessions = await Session.aggregate([
       { $match: { userId: req.user._id } },
@@ -56,7 +56,7 @@ export const getSessionsByUser = async (req, res) => {
   }
 };
 
-export const getSessionMessages = async (req, res) => {
+const getSessionMessages = async (req, res) => {
   try {
     const messages = await Message.find({
       sessionId: req.params.id,
@@ -71,7 +71,7 @@ export const getSessionMessages = async (req, res) => {
   }
 };
 
-export const sendMessage = async (req, res) => {
+const sendMessage = async (req, res) => {
   try {
     const { sessionId, content, systemId } = req.body;
 
@@ -113,4 +113,11 @@ export const sendMessage = async (req, res) => {
     console.error(error);
     res.status(500).json({ error: error.message });
   }
+};
+
+module.exports = {
+  createSession,
+  getSessionsByUser,
+  getSessionMessages,
+  sendMessage,
 };

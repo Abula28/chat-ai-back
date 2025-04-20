@@ -1,12 +1,12 @@
-import express from "express";
-import { body, param } from "express-validator";
-import {
+const express = require("express");
+const { body, param } = require("express-validator");
+const {
   createSession,
   getSessionMessages,
   getSessionsByUser,
   sendMessage,
-} from "../controllers/chatController.js";
-import { checkAuth } from "../middlewares/authMiddleware.js";
+} = require("../controllers/chatController");
+const { checkAuth } = require("../middlewares/authMiddleware");
 
 const router = express.Router();
 
@@ -29,4 +29,4 @@ router.post(
   sendMessage
 );
 
-export default router;
+module.exports = router;

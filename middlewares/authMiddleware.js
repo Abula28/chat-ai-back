@@ -1,8 +1,8 @@
-import jwt from "jsonwebtoken";
-import User from "../models/User.js";
+const jwt = require("jsonwebtoken");
+const User = require("../models/User");
 
 // Middleware to check admin authentication
-export const isAdmin = (req, res, next) => {
+const isAdmin = (req, res, next) => {
   if (req.user.role === "admin") {
     next();
   } else {
@@ -10,7 +10,7 @@ export const isAdmin = (req, res, next) => {
   }
 };
 
-export const checkAuth = async (req, res, next) => {
+const checkAuth = async (req, res, next) => {
   try {
     if (
       !req.headers.authorization ||
@@ -42,4 +42,9 @@ export const checkAuth = async (req, res, next) => {
       message: "Invalid token or token expired",
     });
   }
+};
+
+module.exports = {
+  isAdmin,
+  checkAuth,
 };
