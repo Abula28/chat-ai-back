@@ -121,10 +121,10 @@ npm run dev
 | JWT_EXPIRES_IN     | JWT token expiration time            | No (default: 24h)  |
 | OPENAI_API_KEY     | OpenAI API key for GPT-4 integration | Yes                |
 | PORT               | Server port                          | No (default: 8000) |
-| LANGSMITH_TRACING  | Enable LangSmith tracing             | No                 |
-| LANGSMITH_ENDPOINT | LangSmith API endpoint               | No                 |
-| LANGSMITH_API_KEY  | LangSmith API key                    | No                 |
-| LANGSMITH_PROJECT  | LangSmith project name               | No                 |
+| LANGSMITH_TRACING  | Enable LangSmith tracing             | Yes                |
+| LANGSMITH_ENDPOINT | LangSmith API endpoint               | Yes                |
+| LANGSMITH_API_KEY  | LangSmith API key                    | Yes                |
+| LANGSMITH_PROJECT  | LangSmith project name               | Yes                |
 
 ## Dependencies
 
