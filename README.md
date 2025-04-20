@@ -79,7 +79,7 @@ LANGSMITH_PROJECT=your_langsmith_project
 4. Start the development server:
 
 ```bash
-npm start
+npm run dev
 ```
 
 ## API Endpoints
