@@ -51,7 +51,7 @@ chat-ai-back/
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/chat-ai-back.git
+git clone https://github.com/Abula28/chat-ai-back
 cd chat-ai-back
 ```
 
