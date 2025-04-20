@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { getSystemPrompt } from "../controllers/adminController.js";
+import { getAllSystemPrompts } from "../controllers/adminController.js";
 
 const router = Router();
-router.get("/", getSystemPrompt);
+router.get("/", getAllSystemPrompts);
 
 export default router;

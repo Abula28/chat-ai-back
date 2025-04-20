@@ -12,6 +12,7 @@ const systemPromptSchema = new mongoose.Schema(
     },
     role: {
       type: String,
+      enum: ["system", "persona", "tool", "assistant", "default"],
       default: "default",
     },
     label: {

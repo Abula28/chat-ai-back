@@ -2,24 +2,24 @@ import express from "express";
 import { body, param } from "express-validator";
 import {
   getAllSessions,
-  getSessionDetails,
   updateSystemPrompt,
   createSystemPrompt,
+  getAllMessages,
+  deleteMessage,
+  deleteSession,
+  getAllSystemPrompts,
 } from "../controllers/adminController.js";
 import { checkAuth, isAdmin } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
+router.get("/messages", checkAuth, isAdmin, getAllMessages);
+router.delete("/message/:id", checkAuth, isAdmin, deleteMessage);
+
 router.get("/sessions", checkAuth, isAdmin, getAllSessions);
+router.delete("/session/:id", checkAuth, isAdmin, deleteSession);
 
-router.get(
-  "/sessions/:id",
-  checkAuth,
-  isAdmin,
-  param("id").isMongoId(),
-  getSessionDetails
-);
-
+router.get("/prompts", checkAuth, isAdmin, getAllSystemPrompts);
 router.post("/prompt", checkAuth, isAdmin, createSystemPrompt);
 
 router.put(

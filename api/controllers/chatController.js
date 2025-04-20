@@ -70,6 +70,7 @@ export const getSessionMessages = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 export const sendMessage = async (req, res) => {
   try {
     const { sessionId, content, systemId } = req.body;
