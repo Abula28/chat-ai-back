@@ -1,5 +1,5 @@
 {
-  "name": "abula-ai-back",
+  "name": "chat-ai-back",
   "version": "1.0.0",
   "type": "commonjs",
   "main": "api/index.js",
