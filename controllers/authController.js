@@ -1,5 +1,8 @@
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
+const { sendEmail } = require("../utils/email");
+const { forgotPasswordTemplate } = require("../templates");
+const crypto = require("crypto");
 
 const register = async (req, res) => {
   try {
@@ -132,8 +135,85 @@ const userCheckIn = async (req, res) => {
   }
 };
 
+const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    return res.status(404).json({
+      status: "fail",
+      message: "User with this email not found",
+    });
+  }
+
+  const resetToken = user.createPasswordResetToken();
+
+  await user.save({ validateBeforeSave: false });
+
+  const resetURL = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+
+  try {
+    const html = forgotPasswordTemplate(resetURL);
+
+    await sendEmail(email, "Reset Password", html);
+
+    res.status(200).json({
+      status: "success",
+      message: "Password reset token sent to email",
+    });
+  } catch (err) {
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+    await user.save({ validateBeforeSave: false });
+
+    res.status(500).json({
+      err,
+      message: "Something went wrong",
+    });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  try {
+    const { token } = req.params;
+    const { password, passwordConfirm } = req.body;
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+    const user = await User.findOne({
+      passwordResetToken: hashedToken,
+      passwordResetExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({
+        status: "fail",
+        message: "Invalid or expired token",
+      });
+    }
+
+    user.password = password;
+    user.passwordConfirm = passwordConfirm;
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+
+    await user.save();
+
+    res.status(200).json({
+      status: "success",
+      message: "Password reset successfully",
+    });
+  } catch (err) {
+    res.status(500).json({
+      err,
+      message: "Something went wrong",
+    });
+  }
+};
+
 module.exports = {
   register,
   login,
   userCheckIn,
+  forgotPassword,
+  resetPassword,
 };
