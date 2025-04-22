@@ -8,6 +8,7 @@ const {
   deleteMessage,
   deleteSession,
   getAllSystemPrompts,
+  deleteSystemPrompt,
 } = require("../controllers/adminController");
 const { checkAuth, isAdmin } = require("../middlewares/authMiddleware");
 
@@ -29,5 +30,7 @@ router.put(
   body("content").notEmpty(),
   updateSystemPrompt
 );
+
+router.delete("/prompt/:id", checkAuth, isAdmin, deleteSystemPrompt);
 
 module.exports = router;

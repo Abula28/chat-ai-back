@@ -174,6 +174,8 @@ const deleteSystemPrompt = async (req, res) => {
       return res.status(404).json({ error: "System prompt not found" });
     }
 
+    await Message.deleteMany({ systemId: id });
+
     res.json({
       status: "success",
       message: "System prompt deleted successfully",
