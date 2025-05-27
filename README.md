@@ -69,6 +69,7 @@ MONGODB_URI=your_mongodb_connection_string
 JWT_SECRET_KEY=your_jwt_secret
 JWT_EXPIRES_IN=24h
 OPENAI_API_KEY=your_openai_api_key
+FRONTEND_URL=your_frontend_project_url
 
 LANGSMITH_TRACING=langsmith_trasing
 LANGSMITH_ENDPOINT="https://api.smith.langchain.com"
@@ -111,20 +112,6 @@ npm run dev
 ### Knowledge
 
 - `GET /api/knowledge` - Get all system prompts
-
-## Environment Variables
-
-| Variable           | Description                          | Required           |
-| ------------------ | ------------------------------------ | ------------------ |
-| MONGODB_URI        | MongoDB connection string            | Yes                |
-| JWT_SECRET_KEY     | Secret key for JWT token generation  | Yes                |
-| JWT_EXPIRES_IN     | JWT token expiration time            | No (default: 24h)  |
-| OPENAI_API_KEY     | OpenAI API key for GPT-4 integration | Yes                |
-| PORT               | Server port                          | No (default: 8000) |
-| LANGSMITH_TRACING  | Enable LangSmith tracing             | Yes                |
-| LANGSMITH_ENDPOINT | LangSmith API endpoint               | Yes                |
-| LANGSMITH_API_KEY  | LangSmith API key                    | Yes                |
-| LANGSMITH_PROJECT  | LangSmith project name               | Yes                |
 
 ## Dependencies
 
